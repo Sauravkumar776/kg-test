@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import CheckboxGroup from '../Form/Checkbox/CheckboxGroup';
 import Dropdown from '../Form/Dropdown/Dropdown';
 import RadioToggle from '../Form/RadioToggle/RadioToggle';
@@ -21,15 +22,14 @@ const LOCATION_OPTIONS = [
 const PLACE_TYPE_OPTIONS = ['Entire place', 'Private room', 'Hotel room', 'Shared room'];
 const HOUSE_TYPE_OPTIONS = ['House', 'Apartment', 'Bed and breakfast', 'Boutique hotel'];
 
-const PropertyFilters = () => {
+const PropertyFilters = ({ filters, onFiltersChange }) => {
   const [mobileCollapsed, setMobileCollapsed] = useState(true);
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
   const filterIconClass = mobileCollapsed ? 'fas fa-plus' : 'fas fa-minus';
 
   function onFilterChange(partialFilters) {
     const updatedFilters = { ...filters, ...partialFilters };
-    setFilters(updatedFilters);
+    onFiltersChange(updatedFilters);
   }
 
   return (
@@ -92,7 +92,7 @@ const PropertyFilters = () => {
         </div>
       </div>
       {!isEqual(filters, DEFAULT_FILTERS) && (
-        <button className="filter-clear-button" onClick={() => onFilterChange(DEFAULT_FILTERS)}>
+        <button className="filter-clear-button" onClick={() => onFiltersChange(DEFAULT_FILTERS)}>
           Clear Filters
         </button>
       )}
@@ -100,6 +100,9 @@ const PropertyFilters = () => {
   );
 };
 
-PropertyFilters.propTypes = {};
+PropertyFilters.propTypes = {
+  filters: PropTypes.object.isRequired,
+  onFiltersChange: PropTypes.func.isRequired,
+};
 
 export default PropertyFilters;

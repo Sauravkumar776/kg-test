@@ -5,15 +5,34 @@
   width: 100%;
   max-width: $breakpoint-desktop-lg;
   padding: 0 3rem;
+  margin: 0 auto; // Center the page when screen width exceeds max-width
+
+  .property-content {
+    display: flex;
+    gap: 2rem;
+
+    @media only screen and (max-width: $breakpoint-tablet) {
+      flex-direction: column;
+    }
+  }
 
   .property-info-section {
-    display: inline-block;
-    width: 66%;
+    flex: 1; // Fill remaining horizontal space
+    min-width: 0; // Allow flex item to shrink below its content size
+
+    @media only screen and (max-width: $breakpoint-tablet) {
+      width: 100%;
+      order: 2; // Appear below booking section on mobile
+    }
   }
 
   .property-booking-section {
-    width: 33%;
-    vertical-align: top;
-    display: inline-block;
+    width: 18rem; // Fixed width above tablet breakpoint
+    flex-shrink: 0; // Don't shrink
+
+    @media only screen and (max-width: $breakpoint-tablet) {
+      width: 100%;
+      order: 1; // Appear on top on mobile
+    }
   }
 }

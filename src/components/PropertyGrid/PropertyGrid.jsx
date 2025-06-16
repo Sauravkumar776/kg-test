@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './PropertyGrid.scss';
-import { ApiUtil } from '../../lib/apiUtil';
 import { getPropertiesForPage } from '../../lib/paginationUtil';
 import Pagination from '../Pagination/Pagination';
 
-const PropertyGrid = () => {
-  const [properties, setProperties] = useState(null);
+const PropertyGrid = ({ properties }) => {
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    ApiUtil.getProperties().then((data) => setProperties(data));
-  }, []);
 
   if (!properties || properties.length === 0) {
     return (
@@ -63,7 +57,7 @@ const PropertyGrid = () => {
 };
 
 PropertyGrid.propTypes = {
-  page: PropTypes.number,
+  properties: PropTypes.array.isRequired,
 };
 
 export default PropertyGrid;

@@ -11,12 +11,73 @@ export const PROPERTIES_PER_PAGE = 6;
  * @example getPaginationLabels(100, 50, 5) //returns [1, 49, 50, 51, 100]
  */
 export const getPaginationLabels = (totalPages, curPage, maxLabels) => {
-  //TODO: replace placeholder solution
-  const pageNums = [];
-  for (var i = 0; i < totalPages; i++) {
-    pageNums.push(i + 1);
+  // Handle edge cases
+  if (totalPages <= 0 || maxLabels <= 0) {
+    return [];
   }
-  return pageNums;
+
+  // If total pages is less than or equal to maxLabels, return all pages
+  if (totalPages <= maxLabels) {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  // Always include first and last page
+  const pages = new Set([1, totalPages]);
+  
+  // Add current page
+  pages.add(curPage);
+  
+  // Calculate how many additional pages we can add
+  const remainingSlots = maxLabels - pages.size;
+  
+  if (remainingSlots > 0) {
+    // Try to center around curPage
+    const slotsPerSide = Math.floor(remainingSlots / 2);
+    
+    // Calculate the range around curPage
+    let start = Math.max(1, curPage - slotsPerSide);
+    let end = Math.min(totalPages, curPage + slotsPerSide);
+    
+    // Adjust if we're too close to the beginning or end
+    if (curPage - slotsPerSide < 1) {
+      // Too close to start, add more pages to the right
+      end = Math.min(totalPages, end + (1 - (curPage - slotsPerSide)));
+    } else if (curPage + slotsPerSide > totalPages) {
+      // Too close to end, add more pages to the left
+      start = Math.max(1, start - ((curPage + slotsPerSide) - totalPages));
+    }
+    
+    // Add pages in the calculated range
+    for (let i = start; i <= end; i++) {
+      pages.add(i);
+      if (pages.size >= maxLabels) break;
+    }
+    
+    // If we still have slots and haven't reached maxLabels, fill remaining slots
+    if (pages.size < maxLabels) {
+      // Try to add more pages around the current selection
+      let leftExtend = start - 1;
+      let rightExtend = end + 1;
+      
+      while (pages.size < maxLabels && (leftExtend >= 1 || rightExtend <= totalPages)) {
+        if (leftExtend >= 1 && pages.size < maxLabels) {
+          pages.add(leftExtend);
+          leftExtend--;
+        }
+        if (rightExtend <= totalPages && pages.size < maxLabels) {
+          pages.add(rightExtend);
+          rightExtend++;
+        }
+      }
+    }
+  }
+  
+  // Convert to sorted array
+  return Array.from(pages).sort((a, b) => a - b);
 };
 
 /**

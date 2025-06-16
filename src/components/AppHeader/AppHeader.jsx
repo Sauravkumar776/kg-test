@@ -13,7 +13,22 @@ import Select from 'react-select';
  * corresponding node can be found.
  */
 function goToNode(propertyLookupTree, searchText) {
-  //TODO: optionally implement function
+  if (!propertyLookupTree || !searchText) {
+    return undefined;
+  }
+
+  let currentNode = propertyLookupTree;
+  
+  for (let i = 0; i < searchText.length; i++) {
+    const char = searchText[i].toLowerCase();
+    if (currentNode[char]) {
+      currentNode = currentNode[char];
+    } else {
+      return undefined;
+    }
+  }
+  
+  return currentNode;
 }
 
 /**
@@ -22,7 +37,25 @@ function goToNode(propertyLookupTree, searchText) {
  * @return An array of all matches under `node`
  */
 function collectAllMatches(node) {
-  //TODO: optionally implement function
+  if (!node) {
+    return [];
+  }
+
+  const matches = [];
+  
+  // If this node has a match, add it
+  if (node.match) {
+    matches.push(node.match);
+  }
+  
+  // Recursively collect matches from child nodes
+  Object.keys(node).forEach(key => {
+    if (key !== 'match' && typeof node[key] === 'object') {
+      matches.push(...collectAllMatches(node[key]));
+    }
+  });
+  
+  return matches;
 }
 
 /**
@@ -48,8 +81,16 @@ function collectAllMatches(node) {
  * [{id: "bar", name: "Bar"}, {id: "baz", name: "Baz"}]
  */
 export function findMatches(propertyLookupTree, searchText) {
-  //TODO: implement function
-  return [];
+  if (!propertyLookupTree || !searchText) {
+    return [];
+  }
+
+  const targetNode = goToNode(propertyLookupTree, searchText);
+  if (!targetNode) {
+    return [];
+  }
+
+  return collectAllMatches(targetNode);
 }
 
 function AppHeader({ propertyLookupTree }) {
